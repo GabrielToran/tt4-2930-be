@@ -2,7 +2,7 @@ const path = require("path");
 const http = require("http");
 const dotenv = require("dotenv");
 
-dotenv.config();
+dotenv.config({ path: '/etc/secrets/.env' });
 
 const { connectDB } = require("./config/db");
 const app = require("./app");
