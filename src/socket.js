@@ -6,27 +6,35 @@ const initializeSocket = (server) => {
     io = new Server(server, {
         cors: {
             origin: "*"
+             methods: ["GET", "POST"]
         }
     });
 
     io.on("connection", (socket) => {
+        console.log("Client connected:", socket.id);
+        socket.on("disconnect", () => {
+            console.log("Client disconnected:", socket.id);
+        });
         socket.emit("socket:ready", {
-            message: "Websocket conncetion established."
-        })
+            message: "WebSocket connection established."
+        });
     });
 
     return io;
 }
 
 const emitTaskCreated = (task) => {
-    if(!io){
-        return;
-    }
+    if(!io) return;
+    io.emit("task:created", { data: { task } });
+};
 
-    io.emit("task:created", {
-        message: "Websocket conncetion established.",
-        data: { task }
-    })
-}
+  const emitTaskUpdated = (task) => {
+    if (!io) return;
+    io.emit("task:updated", { data: { task } });
+};
 
-module.exports = { initializeSocket, emitTaskCreated };
+const emitTaskDeleted = (taskId) => {
+    if (!io) return;
+    io.emit("task:deleted", { data: { taskId } });
+};
+module.exports = { initializeSocket, emitTaskCreated, emitTaskUpdated, emitTaskDeleted };
